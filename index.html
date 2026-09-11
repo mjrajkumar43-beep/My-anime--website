@@ -11,73 +11,263 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #0b0b0f;
+    background: #07070b;
     color: white;
 }
 
+/* =========================
+   HEADER
+========================= */
+
 header {
-    background: #15151c;
-    padding: 18px;
+    background: rgba(12, 12, 18, 0.96);
+    padding: 18px 20px;
     position: sticky;
     top: 0;
-    z-index: 10;
-    border-bottom: 1px solid #292933;
+    z-index: 100;
+    border-bottom: 1px solid #292936;
+    backdrop-filter: blur(10px);
 }
 
 .logo {
+    text-align: center;
     font-size: 25px;
     font-weight: bold;
-    text-align: center;
+    text-shadow:
+        0 0 8px #ff0000,
+        0 0 18px #8b0000;
 }
 
 nav {
-    margin-top: 15px;
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 22px;
+    margin-top: 14px;
 }
 
 nav a {
     color: #ddd;
     text-decoration: none;
+    font-weight: bold;
 }
 
+nav a:hover {
+    color: #ff3333;
+}
+
+/* =========================
+   HORROR HOME
+========================= */
+
 .hero {
-    padding: 55px 20px;
+    position: relative;
+    overflow: hidden;
     text-align: center;
-    background: linear-gradient(180deg, #24243a, #0b0b0f);
+    padding: 75px 20px 90px;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(120, 0, 0, 0.28),
+            transparent 45%
+        ),
+        linear-gradient(
+            180deg,
+            #130307 0%,
+            #09080c 55%,
+            #07070b 100%
+        );
+}
+
+/* हल्का धुआँ */
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(255, 0, 0, 0.10),
+            transparent 30%
+        );
+
+    pointer-events: none;
+}
+
+/* =========================
+   RED HORROR EYES
+========================= */
+
+.horror-eyes {
+    position: absolute;
+    left: 50%;
+    top: 38px;
+    transform: translateX(-50%);
+
+    width: min(430px, 90vw);
+    height: 150px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+.eye {
+    position: relative;
+
+    width: 135px;
+    height: 75px;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            #ff3333 0%,
+            #a00000 38%,
+            #260000 72%,
+            transparent 73%
+        );
+
+    border-radius: 70% 10%;
+    transform: rotate(12deg);
+
+    filter:
+        drop-shadow(0 0 8px red)
+        drop-shadow(0 0 22px #8b0000);
+
+    animation: evilEye 3s infinite alternate;
+}
+
+.eye.right {
+    transform: rotate(-12deg);
+}
+
+.eye::after {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: 25px;
+    height: 50px;
+
+    background: #050000;
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 8px #ff0000,
+        0 0 20px #ff0000;
+}
+
+@keyframes evilEye {
+    from {
+        opacity: 0.55;
+        filter:
+            drop-shadow(0 0 6px red)
+            drop-shadow(0 0 12px #8b0000);
+    }
+
+    to {
+        opacity: 1;
+        filter:
+            drop-shadow(0 0 12px red)
+            drop-shadow(0 0 30px #ff0000);
+    }
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    margin-top: 70px;
 }
 
 .hero h1 {
-    font-size: 38px;
-    margin-bottom: 10px;
+    font-size: 40px;
+    margin: 0 0 10px;
+
+    text-shadow:
+        0 0 8px #ff0000,
+        0 0 20px #660000;
 }
 
 .hero p {
-    color: #bbb;
+    color: #aaa;
 }
 
+/* =========================
+   SEARCH
+========================= */
+
 .search-box {
-    max-width: 600px;
+    max-width: 650px;
     margin: 25px auto 0;
+
+    display: flex;
+    gap: 8px;
 }
 
 .search-box input {
-    width: 100%;
-    padding: 14px;
+    flex: 1;
+
+    padding: 15px;
+
+    border: 1px solid #333;
+    border-radius: 8px;
+
+    font-size: 16px;
+
+    outline: none;
+
+    background: #15151d;
+    color: white;
+}
+
+.search-box input:focus {
+    border-color: #d00000;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.25);
+}
+
+.search-box button {
+    padding: 0 20px;
+
     border: none;
     border-radius: 8px;
-    font-size: 16px;
-    outline: none;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+    background: #c00000;
+    color: white;
 }
+
+.search-box button:hover {
+    background: #ff0000;
+}
+
+/* =========================
+   CONTAINER
+========================= */
 
 .container {
     max-width: 1100px;
     margin: auto;
-    padding: 25px 18px;
+    padding: 30px 18px;
 }
 
 .section-title {
@@ -85,30 +275,53 @@ nav a {
     margin-bottom: 20px;
 }
 
+.status {
+    color: #aaa;
+    margin: 15px 0;
+}
+
+/* =========================
+   ANIME CARDS
+========================= */
+
 .anime-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns:
+        repeat(auto-fill, minmax(170px, 1fr));
+
     gap: 18px;
 }
 
 .anime-card {
-    background: #17171e;
+    background: #17171f;
+
+    border: 1px solid #292936;
+
     border-radius: 10px;
+
     overflow: hidden;
+
+    cursor: pointer;
+
     transition: 0.2s;
 }
 
 .anime-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
+
+    border-color: #a00000;
+
+    box-shadow:
+        0 5px 25px rgba(180, 0, 0, 0.25);
 }
 
-.poster {
-    height: 220px;
-    background: linear-gradient(135deg, #303047, #17171e);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 45px;
+.anime-card img {
+    width: 100%;
+    height: 245px;
+
+    object-fit: cover;
+
+    display: block;
 }
 
 .info {
@@ -117,62 +330,343 @@ nav a {
 
 .info h3 {
     margin: 0 0 8px;
-    font-size: 18px;
+    font-size: 17px;
 }
 
 .info p {
     margin: 0;
     color: #999;
-    font-size: 14px;
+    font-size: 13px;
 }
 
-.episode-section {
-    margin-top: 45px;
+/* =========================
+   DETAILS
+========================= */
+
+.anime-details {
+    display: none;
+
+    margin-top: 40px;
+
+    background: #111118;
+
+    padding: 20px;
+
+    border-radius: 12px;
+
+    border: 1px solid #292936;
+}
+
+.details-top {
+    display: flex;
+    gap: 20px;
+}
+
+.details-top img {
+    width: 180px;
+    height: 260px;
+
+    object-fit: cover;
+
+    border-radius: 8px;
+}
+
+.details-text {
+    flex: 1;
+}
+
+.details-text h2 {
+    margin-top: 0;
+}
+
+.details-text p {
+    color: #bbb;
+    line-height: 1.6;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.back-btn,
+.action-btn {
+    padding: 10px 16px;
+
+    border: none;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    color: white;
+
+    background: #292936;
+}
+
+.back-btn {
+    margin-bottom: 20px;
+}
+
+.action-btn:hover {
+    background: #a00000;
+}
+
+/* =========================
+   LANGUAGE
+========================= */
+
+.language-box {
+    margin-top: 15px;
+}
+
+.language-box select {
+    padding: 10px;
+
+    border-radius: 6px;
+
+    border: 1px solid #444;
+
+    background: #20202a;
+
+    color: white;
+}
+
+/* =========================
+   EPISODES
+========================= */
+
+.episode-list {
+    margin-top: 25px;
 }
 
 .episode {
-    background: #17171e;
-    padding: 16px;
+    background: #20202a;
+
+    padding: 15px;
+
     margin-bottom: 10px;
+
     border-radius: 8px;
+
     display: flex;
+
     justify-content: space-between;
+
     align-items: center;
+
+    gap: 10px;
+
+    border: 1px solid transparent;
 }
 
-.episode span {
-    color: #bbb;
+.episode:hover {
+    border-color: #700000;
 }
 
-.watch {
-    background: #333344;
+.episode-info strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.episode-info span {
+    color: #999;
+    font-size: 13px;
+}
+
+.watch-btn {
+    background: #a00000;
+
     color: white;
-    text-decoration: none;
-    padding: 8px 14px;
+
+    border: none;
+
+    padding: 9px 14px;
+
     border-radius: 6px;
+
+    cursor: pointer;
 }
+
+.watch-btn:hover {
+    background: #e00000;
+}
+
+/* =========================
+   VIDEO PLAYER
+========================= */
+
+.video-box {
+    display: none;
+
+    margin-top: 30px;
+
+    background: #000;
+
+    padding: 15px;
+
+    border-radius: 10px;
+
+    border: 1px solid #3a0000;
+}
+
+.video-box h3 {
+    margin-top: 0;
+}
+
+video {
+    width: 100%;
+
+    max-height: 550px;
+
+    background: black;
+
+    border-radius: 8px;
+}
+
+.video-actions {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-top: 12px;
+}
+
+.video-actions button,
+.video-actions a {
+    display: inline-block;
+
+    padding: 10px 15px;
+
+    border: none;
+
+    border-radius: 7px;
+
+    background: #252530;
+
+    color: white;
+
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+.video-actions button:hover,
+.video-actions a:hover {
+    background: #a00000;
+}
+
+.download-hidden {
+    display: none !important;
+}
+
+/* =========================
+   LATEST EPISODES
+========================= */
+
+.latest-box {
+    margin-top: 35px;
+}
+
+.latest-item {
+    background: #15151d;
+
+    padding: 13px;
+
+    margin-bottom: 8px;
+
+    border-radius: 8px;
+
+    border-left: 3px solid #a00000;
+}
+
+/* =========================
+   LOADING
+========================= */
+
+.loading {
+    text-align: center;
+
+    padding: 25px;
+
+    color: #aaa;
+}
+
+/* =========================
+   FOOTER
+========================= */
 
 footer {
     margin-top: 50px;
+
     padding: 30px;
+
     text-align: center;
-    background: #15151c;
+
+    background: #111118;
+
     color: #888;
 }
 
+/* =========================
+   MOBILE
+========================= */
+
 @media (max-width: 600px) {
 
-    .hero h1 {
-        font-size: 30px;
+    .hero {
+        padding: 60px 15px 70px;
     }
 
-    .poster {
-        height: 190px;
+    .hero h1 {
+        font-size: 29px;
     }
 
     nav {
         gap: 12px;
         font-size: 14px;
+    }
+
+    .horror-eyes {
+        width: 310px;
+        height: 120px;
+    }
+
+    .eye {
+        width: 105px;
+        height: 58px;
+    }
+
+    .eye::after {
+        width: 20px;
+        height: 38px;
+    }
+
+    .details-top {
+        flex-direction: column;
+    }
+
+    .details-top img {
+        width: 150px;
+        height: 220px;
+    }
+
+    .episode {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .watch-btn {
+        width: 100%;
+    }
+
+    .search-box {
+        flex-direction: column;
+    }
+
+    .search-box button {
+        padding: 13px;
     }
 }
 </style>
@@ -183,97 +677,92 @@ footer {
 <header>
 
     <div class="logo">
-        🎬 My Anime Website
+        👁️ My Anime Website
     </div>
 
     <nav>
-        <a href="#">Home</a>
+        <a href="#" onclick="goHome()">Home</a>
         <a href="#anime">Anime</a>
         <a href="#episodes">Episodes</a>
     </nav>
 
 </header>
 
+
+<!-- =========================
+     HOME HERO
+========================= -->
+
 <section class="hero">
 
-    <h1>Anime की दुनिया में आपका स्वागत है</h1>
+    <div class="horror-eyes">
 
-    <p>अपने पसंदीदा Anime और Episodes खोजें</p>
+        <div class="eye"></div>
 
-    <div class="search-box">
-        <input
-            type="text"
-            placeholder="Anime खोजें..."
-            onkeyup="searchAnime()"
-            id="search"
-        >
+        <div class="eye right"></div>
+
+    </div>
+
+    <div class="hero-content">
+
+        <h1>Anime की डरावनी दुनिया</h1>
+
+        <p>
+            Anime खोजें और उपलब्ध Episodes देखें
+        </p>
+
+        <div class="search-box">
+
+            <input
+                id="searchInput"
+                type="text"
+                placeholder="Anime का नाम लिखें..."
+                onkeydown="if(event.key==='Enter') searchAnime()"
+            >
+
+            <button onclick="searchAnime()">
+                🔍 Search
+            </button>
+
+        </div>
+
     </div>
 
 </section>
 
+
 <main class="container">
+
+    <!-- ANIME SEARCH -->
 
     <section id="anime">
 
         <h2 class="section-title">
-            🔥 Popular Anime
+            🔥 Anime Search Results
         </h2>
 
-        <div class="anime-grid" id="animeGrid">
+        <div id="status" class="status">
+            Anime खोजने के लिए ऊपर नाम लिखें।
+        </div>
 
-            <div class="anime-card" data-name="Anime One">
+        <div id="animeGrid" class="anime-grid"></div>
 
-                <div class="poster">
-                    🎌
-                </div>
-
-                <div class="info">
-                    <h3>Anime One</h3>
-                    <p>Action • Adventure</p>
-                </div>
-
-            </div>
+    </section>
 
 
-            <div class="anime-card" data-name="Anime Two">
+    <!-- LATEST AUTHORIZED VIDEOS -->
 
-                <div class="poster">
-                    ⚔️
-                </div>
+    <section class="latest-box">
 
-                <div class="info">
-                    <h3>Anime Two</h3>
-                    <p>Fantasy • Action</p>
-                </div>
+        <h2 class="section-title">
+            🆕 Latest Episodes
+        </h2>
 
-            </div>
+        <div id="latestEpisodes">
 
-
-            <div class="anime-card" data-name="Anime Three">
-
-                <div class="poster">
-                    🌟
-                </div>
-
-                <div class="info">
-                    <h3>Anime Three</h3>
-                    <p>Adventure • Fantasy</p>
-                </div>
-
-            </div>
-
-
-            <div class="anime-card" data-name="Anime Four">
-
-                <div class="poster">
-                    🐉
-                </div>
-
-                <div class="info">
-                    <h3>Anime Four</h3>
-                    <p>Fantasy • Mystery</p>
-                </div>
-
+            <div class="loading">
+                Authorized video feed आने पर
+                नए Episodes यहाँ automatic दिखेंगे।
             </div>
 
         </div>
@@ -281,50 +770,135 @@ footer {
     </section>
 
 
-    <section class="episode-section" id="episodes">
+    <!-- ANIME DETAILS -->
 
-        <h2 class="section-title">
-            🆕 Latest Episodes
-        </h2>
+    <section id="animeDetails" class="anime-details">
 
-        <div class="episode">
+        <button class="back-btn" onclick="goHome()">
+            ← वापस
+        </button>
 
-            <div>
-                <strong>Anime One</strong><br>
-                <span>Episode 01</span>
+        <div class="details-top">
+
+            <img
+                id="detailImage"
+                src=""
+                alt="Anime Poster"
+            >
+
+            <div class="details-text">
+
+                <h2 id="detailTitle"></h2>
+
+                <p id="detailDescription"></p>
+
+                <p>
+                    <strong>Episodes:</strong>
+                    <span id="detailEpisodes">
+                        Unknown
+                    </span>
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+                    <span id="detailStatus">
+                        Unknown
+                    </span>
+                </p>
+
+                <div class="language-box">
+
+                    <label>
+                        🌐 Language:
+                    </label>
+
+                    <select
+                        id="languageSelect"
+                        onchange="refreshCurrentVideo()"
+                    >
+
+                        <option value="Hindi">
+                            Hindi
+                        </option>
+
+                        <option value="English">
+                            English
+                        </option>
+
+                        <option value="Japanese">
+                            Japanese
+                        </option>
+
+                        <option value="Tamil">
+                            Tamil
+                        </option>
+
+                        <option value="Telugu">
+                            Telugu
+                        </option>
+
+                    </select>
+
+                </div>
+
             </div>
-
-            <a class="watch" href="#">
-                Watch
-            </a>
 
         </div>
 
 
-        <div class="episode">
+        <!-- EPISODES -->
 
-            <div>
-                <strong>Anime Two</strong><br>
-                <span>Episode 05</span>
-            </div>
+        <div class="episode-list">
 
-            <a class="watch" href="#">
-                Watch
-            </a>
+            <h2 id="episodes">
+                📺 Episodes
+            </h2>
+
+            <div id="episodeList"></div>
 
         </div>
 
 
-        <div class="episode">
+        <!-- VIDEO PLAYER -->
 
-            <div>
-                <strong>Anime Three</strong><br>
-                <span>Episode 12</span>
+        <div id="videoBox" class="video-box">
+
+            <h3 id="videoTitle">
+                Video Player
+            </h3>
+
+            <video
+                id="videoPlayer"
+                controls
+                playsinline
+                preload="metadata"
+            >
+                आपका browser video को support नहीं करता।
+            </video>
+
+            <div class="video-actions">
+
+                <button onclick="shareEpisode()">
+                    🔗 Share
+                </button>
+
+                <a
+                    id="downloadButton"
+                    class="download-hidden"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    ⬇️ Download
+                </a>
+
             </div>
 
-            <a class="watch" href="#">
-                Watch
-            </a>
+            <p
+                id="videoStatus"
+                class="status"
+            >
+                Video source उपलब्ध नहीं है।
+            </p>
 
         </div>
 
@@ -334,34 +908,944 @@ footer {
 
 
 <footer>
+
     © 2026 My Anime Website
+
 </footer>
 
 
 <script>
 
-function searchAnime() {
+/* =====================================================
+   SETTINGS
+===================================================== */
 
-    let search =
-        document.getElementById("search").value.toLowerCase();
+const API_BASE =
+    "https://api.jikan.moe/v4";
 
-    let cards =
-        document.querySelectorAll(".anime-card");
 
-    cards.forEach(function(card) {
+/*
+   यहाँ बाद में आपका OWN / LICENSED
+   automatic video feed लगाया जाएगा।
 
-        let name =
-            card.getAttribute("data-name").toLowerCase();
+   उदाहरण:
 
-        if (name.includes(search)) {
-            card.style.display = "block";
-        } else {
-            card.style.display = "none";
+   const LICENSED_VIDEO_FEED_URL =
+       "https://your-authorized-server.com/videos.json";
+
+   अभी खाली है।
+*/
+
+const LICENSED_VIDEO_FEED_URL = "";
+
+
+/*
+   Feed का expected format:
+
+   {
+       "videos": [
+           {
+               "malId": 20,
+               "episode": 1,
+               "language": "Hindi",
+               "videoUrl": "https://example.com/video.mp4",
+               "downloadUrl": "https://example.com/download.mp4",
+               "title": "Episode 1"
+           }
+       ]
+   }
+
+   केवल authorized/licensed videos इस्तेमाल करें।
+*/
+
+
+let currentAnime = null;
+
+let currentEpisodeNumber = null;
+
+let currentEpisodeTitle = "";
+
+let licensedVideos = [];
+
+
+/* =====================================================
+   SEARCH ANIME
+===================================================== */
+
+async function searchAnime() {
+
+    const input =
+        document.getElementById("searchInput");
+
+    const query =
+        input.value.trim();
+
+    if (!query) {
+
+        document.getElementById("status").textContent =
+            "पहले Anime का नाम लिखें।";
+
+        return;
+    }
+
+    const grid =
+        document.getElementById("animeGrid");
+
+    const status =
+        document.getElementById("status");
+
+    grid.innerHTML = "";
+
+    status.textContent =
+        "Anime खोजे जा रहे हैं...";
+
+    try {
+
+        const response =
+            await fetch(
+                API_BASE +
+                "/anime?q=" +
+                encodeURIComponent(query) +
+                "&limit=12"
+            );
+
+        if (!response.ok) {
+            throw new Error("API error");
         }
+
+        const result =
+            await response.json();
+
+        if (
+            !result.data ||
+            result.data.length === 0
+        ) {
+
+            status.textContent =
+                "कोई Anime नहीं मिला।";
+
+            return;
+        }
+
+        status.textContent =
+            result.data.length +
+            " Anime मिले।";
+
+        result.data.forEach(anime => {
+
+            const card =
+                document.createElement("div");
+
+            card.className =
+                "anime-card";
+
+            const image =
+                anime.images?.jpg?.large_image_url ||
+                anime.images?.jpg?.image_url ||
+                "";
+
+            card.innerHTML = `
+
+                <img
+                    src="${image}"
+                    alt="${escapeHTML(anime.title)}"
+                    loading="lazy"
+                >
+
+                <div class="info">
+
+                    <h3>
+                        ${escapeHTML(anime.title)}
+                    </h3>
+
+                    <p>
+                        Episodes:
+                        ${anime.episodes ?? "Unknown"}
+                    </p>
+
+                </div>
+
+            `;
+
+            card.onclick = function() {
+
+                openAnime(anime.mal_id);
+
+            };
+
+            grid.appendChild(card);
+
+        });
+
+    } catch (error) {
+
+        status.textContent =
+            "Anime लाने में समस्या हुई। थोड़ी देर बाद फिर कोशिश करें।";
+
+        console.error(error);
+
+    }
+
+}
+
+
+/* =====================================================
+   OPEN ANIME
+===================================================== */
+
+async function openAnime(animeId) {
+
+    document.getElementById(
+        "animeDetails"
+    ).style.display = "block";
+
+    document.getElementById(
+        "animeGrid"
+    ).style.display = "none";
+
+    document.getElementById(
+        "status"
+    ).style.display = "none";
+
+    document.getElementById(
+        "animeDetails"
+    ).scrollIntoView({
+        behavior: "smooth"
+    });
+
+    document.getElementById(
+        "episodeList"
+    ).innerHTML =
+        '<div class="loading">Anime information लोड हो रही है...</div>';
+
+    try {
+
+        const response =
+            await fetch(
+                API_BASE +
+                "/anime/" +
+                animeId +
+                "/full"
+            );
+
+        if (!response.ok) {
+            throw new Error("Anime API error");
+        }
+
+        const result =
+            await response.json();
+
+        const anime =
+            result.data;
+
+        currentAnime =
+            anime;
+
+        document.getElementById(
+            "detailTitle"
+        ).textContent =
+            anime.title || "Unknown";
+
+        document.getElementById(
+            "detailImage"
+        ).src =
+            anime.images?.jpg?.large_image_url ||
+            anime.images?.jpg?.image_url ||
+            "";
+
+        document.getElementById(
+            "detailDescription"
+        ).textContent =
+            anime.synopsis ||
+            "इस Anime की description उपलब्ध नहीं है।";
+
+        document.getElementById(
+            "detailEpisodes"
+        ).textContent =
+            anime.episodes ??
+            "Unknown";
+
+        document.getElementById(
+            "detailStatus"
+        ).textContent =
+            anime.status ??
+            "Unknown";
+
+        loadEpisodes(animeId);
+
+    } catch (error) {
+
+        document.getElementById(
+            "episodeList"
+        ).innerHTML =
+            '<div class="loading">Anime information नहीं मिल सकी।</div>';
+
+        console.error(error);
+
+    }
+
+}
+
+
+/* =====================================================
+   LOAD EPISODES
+===================================================== */
+
+async function loadEpisodes(animeId) {
+
+    const episodeList =
+        document.getElementById(
+            "episodeList"
+        );
+
+    episodeList.innerHTML =
+        '<div class="loading">Episodes लोड हो रहे हैं...</div>';
+
+    let allEpisodes = [];
+
+    let page = 1;
+
+    try {
+
+        while (true) {
+
+            const response =
+                await fetch(
+                    API_BASE +
+                    "/anime/" +
+                    animeId +
+                    "/episodes?page=" +
+                    page
+                );
+
+            if (!response.ok) {
+
+                if (response.status === 429) {
+
+                    await sleep(1500);
+
+                    continue;
+                }
+
+                break;
+            }
+
+            const result =
+                await response.json();
+
+            if (
+                !result.data ||
+                result.data.length === 0
+            ) {
+                break;
+            }
+
+            allEpisodes =
+                allEpisodes.concat(
+                    result.data
+                );
+
+            if (
+                !result.pagination?.has_next_page
+            ) {
+                break;
+            }
+
+            page++;
+
+            if (page > 50) {
+                break;
+            }
+
+            await sleep(500);
+
+        }
+
+        if (allEpisodes.length === 0) {
+
+            episodeList.innerHTML =
+                '<div class="loading">इस Anime के Episodes उपलब्ध नहीं हैं।</div>';
+
+            return;
+        }
+
+        episodeList.innerHTML = "";
+
+        allEpisodes.forEach(
+            episode => {
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+                item.className =
+                    "episode";
+
+                const title =
+                    episode.title ||
+                    "Episode " +
+                    episode.mal_id;
+
+                const date =
+                    episode.aired?.from
+                    ? new Date(
+                        episode.aired.from
+                    ).toLocaleDateString()
+                    : "Release date unavailable";
+
+                item.innerHTML = `
+
+                    <div class="episode-info">
+
+                        <strong>
+                            Episode ${episode.mal_id}
+                        </strong>
+
+                        <span>
+                            ${escapeHTML(title)}
+                        </span>
+
+                        <br>
+
+                        <span>
+                            ${date}
+                        </span>
+
+                    </div>
+
+                    <button class="watch-btn">
+                        ▶ Watch
+                    </button>
+
+                `;
+
+                item.querySelector(
+                    ".watch-btn"
+                ).onclick =
+                    function() {
+
+                        openVideo(
+                            animeId,
+                            episode.mal_id,
+                            title
+                        );
+
+                    };
+
+                episodeList.appendChild(
+                    item
+                );
+
+            }
+        );
+
+    } catch (error) {
+
+        episodeList.innerHTML =
+            '<div class="loading">Episodes लाने में समस्या हुई।</div>';
+
+        console.error(error);
+
+    }
+
+}
+
+
+/* =====================================================
+   AUTOMATIC LICENSED VIDEO FEED
+===================================================== */
+
+async function loadLicensedFeed() {
+
+    if (!LICENSED_VIDEO_FEED_URL) {
+
+        renderLatestEpisodes();
+
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                LICENSED_VIDEO_FEED_URL +
+                (
+                    LICENSED_VIDEO_FEED_URL.includes("?")
+                    ? "&"
+                    : "?"
+                ) +
+                "t=" +
+                Date.now()
+            );
+
+        if (!response.ok) {
+            throw new Error(
+                "Video feed error"
+            );
+        }
+
+        const result =
+            await response.json();
+
+        if (
+            !result.videos ||
+            !Array.isArray(result.videos)
+        ) {
+
+            throw new Error(
+                "Invalid feed format"
+            );
+
+        }
+
+        licensedVideos =
+            result.videos;
+
+        localStorage.setItem(
+            "licensedVideos",
+            JSON.stringify(
+                licensedVideos
+            )
+        );
+
+        renderLatestEpisodes();
+
+        refreshCurrentVideo();
+
+    } catch (error) {
+
+        console.error(
+            "Licensed feed:",
+            error
+        );
+
+        const saved =
+            localStorage.getItem(
+                "licensedVideos"
+            );
+
+        if (saved) {
+
+            try {
+
+                licensedVideos =
+                    JSON.parse(saved);
+
+                renderLatestEpisodes();
+
+            } catch (_) {}
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   LATEST EPISODES
+===================================================== */
+
+function renderLatestEpisodes() {
+
+    const box =
+        document.getElementById(
+            "latestEpisodes"
+        );
+
+    if (
+        !licensedVideos ||
+        licensedVideos.length === 0
+    ) {
+
+        box.innerHTML = `
+            <div class="loading">
+                अभी कोई authorized video feed
+                उपलब्ध नहीं है।
+            </div>
+        `;
+
+        return;
+    }
+
+    box.innerHTML = "";
+
+    const latest =
+        licensedVideos
+            .slice()
+            .reverse()
+            .slice(0, 10);
+
+    latest.forEach(video => {
+
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "latest-item";
+
+        item.innerHTML = `
+
+            <strong>
+                ${escapeHTML(
+                    video.title ||
+                    "Episode " +
+                    video.episode
+                )}
+            </strong>
+
+            <br>
+
+            <small>
+                Language:
+                ${escapeHTML(
+                    video.language ||
+                    "Unknown"
+                )}
+            </small>
+
+        `;
+
+        box.appendChild(item);
 
     });
 
 }
+
+
+/* =====================================================
+   FIND VIDEO
+===================================================== */
+
+function findLicensedVideo(
+    animeId,
+    episodeNumber,
+    language
+) {
+
+    return licensedVideos.find(
+        video =>
+            Number(video.malId) ===
+            Number(animeId)
+
+            &&
+
+            Number(video.episode) ===
+            Number(episodeNumber)
+
+            &&
+
+            String(
+                video.language
+            ).toLowerCase() ===
+            String(
+                language
+            ).toLowerCase()
+    );
+
+}
+
+
+/* =====================================================
+   OPEN VIDEO
+===================================================== */
+
+function openVideo(
+    animeId,
+    episodeNumber,
+    title
+) {
+
+    currentEpisodeNumber =
+        episodeNumber;
+
+    currentEpisodeTitle =
+        title;
+
+    const videoBox =
+        document.getElementById(
+            "videoBox"
+        );
+
+    videoBox.style.display =
+        "block";
+
+    document.getElementById(
+        "videoTitle"
+    ).textContent =
+        "▶ Episode " +
+        episodeNumber +
+        " - " +
+        title;
+
+    refreshCurrentVideo();
+
+    videoBox.scrollIntoView({
+        behavior: "smooth"
+    });
+
+}
+
+
+/* =====================================================
+   REFRESH VIDEO BY LANGUAGE
+===================================================== */
+
+function refreshCurrentVideo() {
+
+    if (
+        !currentAnime ||
+        !currentEpisodeNumber
+    ) {
+        return;
+    }
+
+    const language =
+        document.getElementById(
+            "languageSelect"
+        ).value;
+
+    const video =
+        findLicensedVideo(
+            currentAnime.mal_id,
+            currentEpisodeNumber,
+            language
+        );
+
+    const player =
+        document.getElementById(
+            "videoPlayer"
+        );
+
+    const status =
+        document.getElementById(
+            "videoStatus"
+        );
+
+    const download =
+        document.getElementById(
+            "downloadButton"
+        );
+
+    player.pause();
+
+    player.removeAttribute(
+        "src"
+    );
+
+    player.load();
+
+    download.classList.add(
+        "download-hidden"
+    );
+
+    download.removeAttribute(
+        "href"
+    );
+
+    if (!video) {
+
+        status.textContent =
+            language +
+            " में इस Episode का authorized video अभी उपलब्ध नहीं है।";
+
+        return;
+    }
+
+    if (!video.videoUrl) {
+
+        status.textContent =
+            "इस Episode का video URL उपलब्ध नहीं है।";
+
+        return;
+    }
+
+    player.src =
+        video.videoUrl;
+
+    player.load();
+
+    status.textContent =
+        language +
+        " video तैयार है।";
+
+    if (video.downloadUrl) {
+
+        download.href =
+            video.downloadUrl;
+
+        download.classList.remove(
+            "download-hidden"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   SHARE
+===================================================== */
+
+async function shareEpisode() {
+
+    if (!currentAnime) {
+        return;
+    }
+
+    const language =
+        document.getElementById(
+            "languageSelect"
+        ).value;
+
+    const shareUrl =
+        window.location.origin +
+        window.location.pathname +
+        "?anime=" +
+        encodeURIComponent(
+            currentAnime.mal_id
+        ) +
+        "&episode=" +
+        encodeURIComponent(
+            currentEpisodeNumber
+        ) +
+        "&language=" +
+        encodeURIComponent(
+            language
+        );
+
+    const shareData = {
+
+        title:
+            currentAnime.title +
+            " - Episode " +
+            currentEpisodeNumber,
+
+        text:
+            currentEpisodeTitle,
+
+        url:
+            shareUrl
+
+    };
+
+    try {
+
+        if (
+            navigator.share
+        ) {
+
+            await navigator.share(
+                shareData
+            );
+
+        } else {
+
+            await navigator.clipboard.writeText(
+                shareUrl
+            );
+
+            alert(
+                "Episode link copy हो गया।"
+            );
+
+        }
+
+    } catch (error) {
+
+        console.log(
+            "Share cancelled",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   HOME
+===================================================== */
+
+function goHome() {
+
+    document.getElementById(
+        "animeDetails"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "animeGrid"
+    ).style.display =
+        "grid";
+
+    document.getElementById(
+        "status"
+    ).style.display =
+        "block";
+
+    document.getElementById(
+        "videoBox"
+    ).style.display =
+        "none";
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function sleep(ms) {
+
+    return new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                ms
+            )
+    );
+
+}
+
+
+function escapeHTML(text) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+    div.textContent =
+        text ?? "";
+
+    return div.innerHTML;
+
+}
+
+
+/* =====================================================
+   START AUTOMATIC FEED
+===================================================== */
+
+loadLicensedFeed();
+
+
+/*
+   Website खुली रहने पर हर 5 मिनट
+   authorized feed को check करेगा।
+*/
+
+setInterval(
+    loadLicensedFeed,
+    5 * 60 * 1000
+);
 
 </script>
 
