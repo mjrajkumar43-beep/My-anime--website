@@ -1,35 +1,13 @@
-/* ====================================================
-   MY ANIME WEBSITE
-   script.js
-==================================================== */
-
 const API = "/api";
-
-/* ====================================================
-   ELEMENTS
-==================================================== */
-
-const seriesGrid = document.getElementById("sg");
-const movieGrid = document.getElementById("mg");
-const topGrid = document.getElementById("tg");
-const searchInput = document.getElementById("search");
-
-const modal = document.getElementById("modal");
-const watchTitle = document.getElementById("wt");
 
 let currentAnime = null;
 let currentSeason = 1;
 let currentEpisode = 1;
 
+/* ---------- Helpers ---------- */
 
-/* ====================================================
-   HELPERS
-==================================================== */
-
-function escapeHTML(text) {
-    if (text === undefined || text === null) return "";
-
-    return String(text)
+function escapeHTML(value) {
+    return String(value ?? "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -37,260 +15,130 @@ function escapeHTML(text) {
         .replace(/'/g, "&#039;");
 }
 
-
-function getImage(item) {
-
-    return (
-        item?.image ||
-        item?.poster ||
-        item?.cover ||
-        item?.thumbnail ||
-        item?.img ||
-        "https://via.placeholder.com/300x440?text=Anime"
-    );
-
-}
-
-
 function getTitle(item) {
-
     return (
         item?.title ||
         item?.name ||
         item?.animeTitle ||
+        item?.seriesTitle ||
         "Unknown Anime"
     );
-
 }
-
 
 function getId(item) {
-
-    return (
-        item?.id ||
-        item?.slug ||
-        item?.animeId ||
-        item?.mal_id ||
-        ""
-    );
-
+    return item?.id || item?.animeId || item?._id || item?.slug || "";
 }
 
+function getImage(item) {
+    return (
+        item?.image ||
+        item?.poster ||
+        item?.posterImage ||
+        item?.thumbnail ||
+        item?.cover ||
+        ""
+    );
+}
 
-/* ====================================================
-   CREATE ANIME CARD
-==================================================== */
+/* ---------- Card ---------- */
 
-function createCard(item, number = null) {
-
+function createCard(item, type = "series") {
     const title = getTitle(item);
     const id = getId(item);
     const image = getImage(item);
 
-    const card = document.createElement("div");
+    return `
+        <article class="card" data-title="${escapeHTML(title.toLowerCase())}"
+                 onclick="openAnime('${encodeURIComponent(id)}')">
 
-    card.className = "card";
+            <div class="poster">
+                ${
+                    image
+                        ? `<img src="${escapeHTML(image)}"
+                               alt="${escapeHTML(title)}"
+                               loading="lazy">`
+                        : `<div class="poster-placeholder">
+                               ${escapeHTML(title)}
+                           </div>`
+                }
+            </div>
 
-    if (number !== null) {
-        card.dataset.number = number;
-    }
-
-    card.innerHTML = `
-        <img
-            src="${escapeHTML(image)}"
-            alt="${escapeHTML(title)}"
-            loading="lazy"
-            onerror="this.src='https://via.placeholder.com/300x440?text=Anime'"
-        >
-
-        <div class="card-info">
-            <h3>${escapeHTML(title)}</h3>
-            <p>
-                ${escapeHTML(
-                    item?.type ||
-                    item?.releaseDate ||
-                    "Anime"
-                )}
-            </p>
-        </div>
+            <div class="body">
+                <h3>${escapeHTML(title)}</h3>
+                <small>${type === "movie" ? "Movie" : "Series"}</small>
+            </div>
+        </article>
     `;
-
-    card.addEventListener("click", () => {
-
-        if (id) {
-            openAnime(id, title);
-        } else {
-            watch(title);
-        }
-
-    });
-
-    return card;
 }
 
-
-/* ====================================================
-   LOAD HOME
-==================================================== */
+/* ---------- Home ---------- */
 
 async function loadHome() {
-
     try {
-
         const response = await fetch(`${API}/home`);
-
-        if (!response.ok) {
-            throw new Error("Home API failed");
-        }
-
         const data = await response.json();
 
-        console.log("Home data:", data);
-
-        /*
-         Different API responses may use different
-         property names, so we check several common ones.
-        */
+        const source =
+            data?.results ||
+            data?.data ||
+            data?.result ||
+            data;
 
         const series =
-            data?.series ||
-            data?.results?.series ||
-            data?.recentlyAdded ||
-            data?.recent ||
-            data?.data?.series ||
+            source?.series ||
+            source?.anime ||
+            source?.recent ||
             [];
 
         const movies =
-            data?.movies ||
-            data?.results?.movies ||
-            data?.data?.movies ||
+            source?.movies ||
             [];
 
-        const popular =
-            data?.popular ||
-            data?.results?.popular ||
-            data?.top10 ||
-            data?.data?.popular ||
-            series;
+        const seriesGrid = document.getElementById("sg");
+        const movieGrid = document.getElementById("mg");
+        const topGrid = document.getElementById("tg");
 
-        renderGrid(seriesGrid, series);
-        renderGrid(movieGrid, movies);
-        renderGrid(topGrid, popular.slice(0, 10));
+        if (seriesGrid) {
+            seriesGrid.innerHTML = Array.isArray(series)
+                ? series.map(x => createCard(x, "series")).join("")
+                : "";
+        }
+
+        if (movieGrid) {
+            movieGrid.innerHTML = Array.isArray(movies)
+                ? movies.map(x => createCard(x, "movie")).join("")
+                : "";
+        }
+
+        if (topGrid) {
+            topGrid.innerHTML = Array.isArray(series)
+                ? series.slice(0, 10)
+                    .map(x => createCard(x, "series"))
+                    .join("")
+                : "";
+        }
 
     } catch (error) {
-
-        console.error(error);
-
-        showMessage(
-            seriesGrid,
-            "Anime data load नहीं हो पाया।"
-        );
-
-        showMessage(
-            movieGrid,
-            "Movies data load नहीं हो पाया।"
-        );
-
+        console.error("Home API error:", error);
     }
-
 }
 
+/* ---------- Search ---------- */
 
-/* ====================================================
-   RENDER GRID
-==================================================== */
+async function searchAnime(query) {
+    query = query.trim();
 
-function renderGrid(container, items) {
-
-    if (!container) return;
-
-    container.innerHTML = "";
-
-    if (!Array.isArray(items) || items.length === 0) {
-
-        container.innerHTML = `
-            <p class="muted">
-                अभी कोई data उपलब्ध नहीं है।
-            </p>
-        `;
-
+    if (!query) {
+        loadHome();
         return;
     }
 
-    items.forEach((item, index) => {
-
-        container.appendChild(
-            createCard(item, index + 1)
-        );
-
-    });
-
-}
-
-
-/* ====================================================
-   MESSAGE
-==================================================== */
-
-function showMessage(container, message) {
-
-    if (!container) return;
-
-    container.innerHTML = `
-        <p class="muted">${escapeHTML(message)}</p>
-    `;
-
-}
-
-
-/* ====================================================
-   SEARCH
-==================================================== */
-
-let searchTimer = null;
-
-if (searchInput) {
-
-    searchInput.addEventListener("input", () => {
-
-        clearTimeout(searchTimer);
-
-        const query =
-            searchInput.value.trim();
-
-        if (!query) {
-
-            loadHome();
-
-            return;
-        }
-
-        searchTimer = setTimeout(() => {
-
-            searchAnime(query);
-
-        }, 400);
-
-    });
-
-}
-
-
-async function searchAnime(query) {
-
     try {
-
         const response = await fetch(
             `${API}/search?s=${encodeURIComponent(query)}&page=1`
         );
 
-        if (!response.ok) {
-            throw new Error("Search failed");
-        }
-
         const data = await response.json();
-
-        console.log("Search:", data);
 
         const results =
             data?.results?.results ||
@@ -298,343 +146,319 @@ async function searchAnime(query) {
             data?.data ||
             [];
 
-        renderGrid(seriesGrid, results);
+        const seriesGrid = document.getElementById("sg");
 
-        if (movieGrid) {
-            movieGrid.innerHTML = "";
+        if (!seriesGrid) return;
+
+        if (!Array.isArray(results) || results.length === 0) {
+            seriesGrid.innerHTML =
+                `<p class="muted">Anime नहीं मिला।</p>`;
+            return;
         }
 
-        if (topGrid) {
-            topGrid.innerHTML = "";
-        }
+        seriesGrid.innerHTML =
+            results.map(x => createCard(x, "series")).join("");
 
     } catch (error) {
-
-        console.error(error);
-
-        showMessage(
-            seriesGrid,
-            "Search करने में समस्या हुई।"
-        );
-
+        console.error("Search error:", error);
     }
-
 }
 
+/* ---------- Anime Info ---------- */
 
-/* ====================================================
-   OPEN ANIME
-==================================================== */
+async function openAnime(encodedId) {
+    const id = decodeURIComponent(encodedId);
 
-async function openAnime(id, title) {
-
-    currentAnime = id;
-    currentSeason = 1;
-    currentEpisode = 1;
-
-    watchTitle.textContent =
-        title || "Watch Episode";
-
-    modal.classList.add("show");
+    if (!id) return;
 
     try {
-
         const response = await fetch(
-            `${API}/episodes?id=${encodeURIComponent(id)}&season=1`
+            `${API}/info?id=${encodeURIComponent(id)}`
         );
-
-        if (!response.ok) {
-            throw new Error("Episodes API failed");
-        }
 
         const data = await response.json();
 
-        console.log("Episodes:", data);
+        currentAnime = data?.result || data?.data || data;
 
-        /*
-          Episode buttons can be added here when the API
-          returns episode information.
-        */
+        showAnimeInfo(currentAnime, id);
 
     } catch (error) {
-
-        console.error(error);
-
+        console.error("Anime info error:", error);
+        alert("Anime information load नहीं हो सकी।");
     }
-
 }
 
+/* ---------- Anime Details ---------- */
 
-/* ====================================================
-   WATCH
-==================================================== */
+function showAnimeInfo(info, id) {
+    const title = getTitle(info);
 
-function watch(title, id = null) {
+    const modal = document.getElementById("modal");
+    const titleElement = document.getElementById("wt");
 
-    currentAnime =
-        id || title;
-
-    currentSeason = 1;
-    currentEpisode = 1;
-
-    if (watchTitle) {
-
-        watchTitle.textContent =
-            title || "Watch Episode";
-
+    if (titleElement) {
+        titleElement.textContent = title;
     }
 
     if (modal) {
-
         modal.classList.add("show");
-
     }
 
+    loadEpisodes(id, 1);
 }
 
+/* ---------- Episodes ---------- */
 
-/* ====================================================
-   CLOSE MODAL
-==================================================== */
-
-function closeModal() {
-
-    if (!modal) return;
-
-    modal.classList.remove("show");
-
-}
-
-
-/* ====================================================
-   CLOSE WHEN CLICKING OUTSIDE
-==================================================== */
-
-if (modal) {
-
-    modal.addEventListener("click", (event) => {
-
-        if (event.target === modal) {
-            closeModal();
-        }
-
-    });
-
-}
-
-
-/* ====================================================
-   ESC KEY
-==================================================== */
-
-document.addEventListener("keydown", (event) => {
-
-    if (event.key === "Escape") {
-
-        closeModal();
-
-    }
-
-});
-
-
-/* ====================================================
-   SERVER BUTTONS
-==================================================== */
-
-document.querySelectorAll(".servers button")
-    .forEach(button => {
-
-        button.addEventListener("click", () => {
-
-            document
-                .querySelectorAll(".servers button")
-                .forEach(btn =>
-                    btn.classList.remove("active")
-                );
-
-            button.classList.add("active");
-
-            console.log(
-                "Selected server:",
-                button.textContent
-            );
-
-        });
-
-    });
-
-
-/* ====================================================
-   PREVIOUS / NEXT
-==================================================== */
-
-const controlButtons =
-    document.querySelectorAll(".controls button");
-
-if (controlButtons.length >= 2) {
-
-    controlButtons[0].addEventListener(
-        "click",
-        () => {
-
-            if (currentEpisode > 1) {
-
-                currentEpisode--;
-
-                loadEpisode();
-
-            }
-
-        }
-    );
-
-
-    controlButtons[1].addEventListener(
-        "click",
-        () => {
-
-            currentEpisode++;
-
-            loadEpisode();
-
-        }
-    );
-
-}
-
-
-/* ====================================================
-   LOAD EPISODE / STREAM
-==================================================== */
-
-async function loadEpisode() {
-
-    if (!currentAnime) return;
-
-    console.log(
-        "Loading:",
-        currentAnime,
-        "Season:",
-        currentSeason,
-        "Episode:",
-        currentEpisode
-    );
+async function loadEpisodes(id, season = 1) {
+    currentSeason = season;
 
     try {
-
         const response = await fetch(
-            `${API}/stream?id=${encodeURIComponent(currentAnime)}&season=${currentSeason}&ep=${currentEpisode}`
+            `${API}/episodes?id=${encodeURIComponent(id)}&season=${season}`
         );
-
-        if (!response.ok) {
-            throw new Error("Stream API failed");
-        }
 
         const data = await response.json();
 
-        console.log("Stream data:", data);
+        const episodes =
+            data?.results ||
+            data?.episodes ||
+            data?.data ||
+            data;
 
-        /*
-          The API response can contain the actual stream
-          URL. We do not download or host the video here.
-        */
-
-        const player =
-            document.querySelector(".player");
-
-        if (!player) return;
-
-        const streamUrl =
-            data?.url ||
-            data?.stream ||
-            data?.link ||
-            data?.sources?.[0]?.url;
-
-        if (streamUrl) {
-
-            player.innerHTML = `
-                <video
-                    controls
-                    autoplay
-                    playsinline
-                    style="width:100%;height:100%;background:#000;"
-                >
-                    <source
-                        src="${escapeHTML(streamUrl)}"
-                        type="video/mp4"
-                    >
-                    Your browser does not support video playback.
-                </video>
-            `;
-
-        } else {
-
-            player.innerHTML = `
-                <div>
-                    <div style="font-size:45px;">▶</div>
-                    <p style="color:#777;margin-top:10px;">
-                        Stream available नहीं है।
-                    </p>
-                </div>
-            `;
-
-        }
+        renderEpisodes(episodes, id);
 
     } catch (error) {
-
-        console.error(error);
-
-        const player =
-            document.querySelector(".player");
-
-        if (player) {
-
-            player.innerHTML = `
-                <div>
-                    <div style="font-size:45px;">⚠</div>
-                    <p style="color:#777;margin-top:10px;">
-                        Episode load नहीं हो पाया।
-                    </p>
-                </div>
-            `;
-
-        }
-
+        console.error("Episode error:", error);
     }
-
 }
 
+/* ---------- Episode Buttons ---------- */
 
-/* ====================================================
-   MOBILE MENU
-==================================================== */
+function renderEpisodes(episodes, id) {
+    let container = document.getElementById("episodes");
 
-const menuButton =
-    document.getElementById("menu");
+    if (!container) {
+        container = document.createElement("div");
+        container.id = "episodes";
+        container.className = "episodes";
+
+        const box = document.querySelector(".box");
+
+        if (box) {
+            box.appendChild(container);
+        }
+    }
+
+    if (!Array.isArray(episodes)) {
+        container.innerHTML =
+            `<p class="muted">Episodes उपलब्ध नहीं हैं।</p>`;
+        return;
+    }
+
+    container.innerHTML = episodes.map((ep, index) => {
+
+        const number =
+            ep?.episode ||
+            ep?.episodeNumber ||
+            ep?.number ||
+            index + 1;
+
+        return `
+            <button class="episode-btn"
+                    onclick="loadEpisode(
+                        '${encodeURIComponent(id)}',
+                        ${currentSeason},
+                        ${Number(number)}
+                    )">
+                Episode ${escapeHTML(number)}
+            </button>
+        `;
+
+    }).join("");
+}
+
+/* ---------- Video / Stream ---------- */
+
+async function loadEpisode(encodedId, season = 1, episode = 1) {
+    const id = decodeURIComponent(encodedId);
+
+    currentAnime = id;
+    currentSeason = season;
+    currentEpisode = episode;
+
+    try {
+        const response = await fetch(
+            `${API}/stream?id=${encodeURIComponent(id)}&season=${season}&ep=${episode}`
+        );
+
+        const data = await response.json();
+
+        showPlayer(data);
+
+    } catch (error) {
+        console.error("Stream error:", error);
+        alert("इस episode का authorized stream उपलब्ध नहीं है।");
+    }
+}
+
+/* ---------- Player ---------- */
+
+function showPlayer(data) {
+    const player =
+        document.querySelector(".player") ||
+        document.getElementById("player");
+
+    if (!player) return;
+
+    const streams =
+        data?.streams ||
+        data?.servers ||
+        data?.results ||
+        data?.data ||
+        [];
+
+    let list = [];
+
+    if (Array.isArray(streams)) {
+        list = streams;
+    } else if (typeof streams === "object") {
+        list = Object.entries(streams).map(([name, url]) => ({
+            name,
+            url
+        }));
+    }
+
+    const directUrl =
+        data?.url ||
+        data?.videoUrl ||
+        data?.streamUrl ||
+        data?.embedUrl ||
+        data?.iframe;
+
+    if (directUrl) {
+        list.unshift({
+            name: "Default",
+            url: directUrl
+        });
+    }
+
+    if (!list.length) {
+        player.innerHTML =
+            `<div class="player-message">
+                इस episode के लिए कोई playable stream नहीं मिला।
+             </div>`;
+        return;
+    }
+
+    const first = list[0];
+
+    player.innerHTML = `
+        <iframe
+            id="videoFrame"
+            src="${escapeHTML(first.url)}"
+            allowfullscreen
+            loading="lazy">
+        </iframe>
+    `;
+
+    const serverBox = document.querySelector(".servers");
+
+    if (serverBox) {
+        serverBox.innerHTML = list.map((server, index) => `
+            <button onclick="changeServer(${index})">
+                ${escapeHTML(server.name || `Server ${index + 1}`)}
+            </button>
+        `).join("");
+
+        window.currentStreams = list;
+    }
+}
+
+/* ---------- Change Server ---------- */
+
+function changeServer(index) {
+    const streams = window.currentStreams || [];
+    const stream = streams[index];
+
+    if (!stream?.url) return;
+
+    const frame = document.getElementById("videoFrame");
+
+    if (frame) {
+        frame.src = stream.url;
+    }
+}
+
+/* ---------- Previous / Next ---------- */
+
+function previousEpisode() {
+    if (currentEpisode <= 1) return;
+
+    loadEpisode(
+        encodeURIComponent(currentAnime),
+        currentSeason,
+        currentEpisode - 1
+    );
+}
+
+function nextEpisode() {
+    loadEpisode(
+        encodeURIComponent(currentAnime),
+        currentSeason,
+        currentEpisode + 1
+    );
+}
+
+/* ---------- Close Player ---------- */
+
+function closeModal() {
+    const modal = document.getElementById("modal");
+
+    if (modal) {
+        modal.classList.remove("show");
+    }
+
+    const player =
+        document.querySelector(".player") ||
+        document.getElementById("player");
+
+    if (player) {
+        player.innerHTML = "";
+    }
+}
+
+/* ---------- Search Input ---------- */
+
+const searchInput = document.getElementById("search");
+
+if (searchInput) {
+    let timer;
+
+    searchInput.addEventListener("input", function () {
+        clearTimeout(timer);
+
+        timer = setTimeout(() => {
+            searchAnime(this.value);
+        }, 500);
+    });
+}
+
+/* ---------- Mobile Menu ---------- */
+
+const menuButton = document.getElementById("menu");
 
 if (menuButton) {
-
     menuButton.addEventListener("click", () => {
+        const nav = document.querySelector("nav");
 
-        document
-            .querySelector("nav")
-            ?.classList.toggle("open");
-
+        if (nav) {
+            nav.classList.toggle("open");
+        }
     });
-
 }
 
+/* ---------- Start ---------- */
 
-/* ====================================================
-   INITIAL LOAD
-==================================================== */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        loadHome();
-
-    }
-);
+document.addEventListener("DOMContentLoaded", () => {
+    loadHome();
+});
