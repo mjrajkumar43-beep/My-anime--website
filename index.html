@@ -1,11 +1,724 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AnimeWorld</title><link rel="stylesheet" href="style.css"></head><body>
-<header><button id="menu">☰</button><a class="logo">Anime<span>World</span></a><nav><a href="#series">Anime</a><a href="#series">Series</a><a href="#movies">Movies</a><a href="#series">Hindi Dub</a><a href="#schedule">Schedule</a></nav><button id="login">◉</button></header>
-<section class="hero"><div><b>HINDI DUB</b><h1>The Case Study of Vanitas</h1><p>★ 8.50　•　2021　•　24m</p><p>Action　 Adventure　 Supernatural　 Vampire</p><button onclick="watch('The Case Study of Vanitas')">▶ Watch Series</button></div></section>
-<div class="search">⌕ <input id="search" placeholder="Search anime..."></div>
-<section id="series"><div class="head"><h2>Series</h2><span>Recent　 Popular</span></div><div class="grid" id="sg"></div></section>
-<section id="movies"><div class="head"><h2>Movies</h2><span>Recent　 Popular</span></div><div class="grid" id="mg"></div></section>
-<section><h2>TOP 10 SERIES TODAY</h2><div class="grid" id="tg"></div></section>
-<section id="schedule"><h2>Estimated Schedule / Timing</h2><p class="muted">Upcoming episode schedule — demo data.</p><div class="days"><button>Monday</button><button>Tuesday</button><button>Wednesday</button><button>Thursday</button><button>Friday</button><button>Saturday</button><button class="wide">Sunday</button></div><div class="list"><div>CAPTAIN TSUBASA — <b>New Episode</b></div><div>LIAR GAME — <b>New Episode</b></div></div></section>
-<footer>AnimeWorld • Anime streaming UI demo</footer>
-<div class="modal" id="modal"><div class="box"><button class="x" onclick="closeModal()">×</button><h2 id="wt">Watch Episode</h2><div class="servers"><button>HydraX</button><button>VidStream</button><button>NeoCDN</button><button>VidCloud</button></div><div class="player">▶</div><div class="controls">Audio <select><option>Hindi</option><option>English</option><option>Tamil</option></select><button>⏮ Previous</button><button>Next ⏭</button></div></div></div>
-<script src="script.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#111111">
+
+    <meta name="description"
+          content="My Anime Website - Watch anime and movies">
+
+    <title>My Anime Website</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- ==================================================
+     HEADER
+================================================== -->
+
+<header class="navbar">
+
+    <div class="nav-left">
+
+        <button
+            id="menuBtn"
+            class="menu-btn"
+            aria-label="Open menu">
+            ☰
+        </button>
+
+        <a href="#" class="logo">
+            My <span>Anime</span>
+        </a>
+
+    </div>
+
+    <nav id="mainNav">
+
+        <a href="#home">Home</a>
+        <a href="#series">Anime</a>
+        <a href="#series">Series</a>
+        <a href="#movies">Movies</a>
+        <a href="#schedule">Schedule</a>
+
+    </nav>
+
+    <div class="nav-right">
+
+        <button
+            id="searchBtn"
+            class="icon-btn"
+            aria-label="Search">
+            🔍
+        </button>
+
+        <button
+            id="loginBtn"
+            class="icon-btn"
+            aria-label="Account">
+            ◉
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- ==================================================
+     MOBILE MENU
+================================================== -->
+
+<div id="mobileMenu" class="mobile-menu">
+
+    <a href="#home">Home</a>
+    <a href="#series">Anime</a>
+    <a href="#series">Series</a>
+    <a href="#movies">Movies</a>
+    <a href="#schedule">Schedule</a>
+
+</div>
+
+
+<!-- ==================================================
+     HOME / HERO
+================================================== -->
+
+<main id="home">
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <div class="hero-badge">
+                HINDI DUB
+            </div>
+
+            <h1 id="heroTitle">
+                The Case Study of Vanitas
+            </h1>
+
+            <div class="hero-meta">
+
+                <span>★ 8.5</span>
+                <span>•</span>
+                <span>2021</span>
+                <span>•</span>
+                <span>24m</span>
+
+            </div>
+
+            <p id="heroDescription">
+                Discover your next favourite anime.
+                Watch anime series and movies in one place.
+            </p>
+
+            <div class="hero-buttons">
+
+                <button
+                    class="primary-btn"
+                    id="heroWatchBtn">
+                    ▶ Watch Now
+                </button>
+
+                <button
+                    class="secondary-btn"
+                    id="heroInfoBtn">
+                    ＋ More Info
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         SEARCH
+    ================================================== -->
+
+    <section class="search-section">
+
+        <div class="search-box">
+
+            <span>🔍</span>
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search anime..."
+                autocomplete="off">
+
+            <button id="clearSearch">
+                ×
+            </button>
+
+        </div>
+
+        <div
+            id="searchResults"
+            class="search-results">
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         RECENTLY ADDED
+    ================================================== -->
+
+    <section class="content-section">
+
+        <div class="section-header">
+
+            <div>
+                <h2>Recently Added</h2>
+                <p>Latest anime and episodes</p>
+            </div>
+
+            <button
+                class="view-all"
+                id="recentViewAll">
+                View All →
+            </button>
+
+        </div>
+
+        <div
+            id="recentGrid"
+            class="anime-grid">
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         SERIES
+    ================================================== -->
+
+    <section
+        id="series"
+        class="content-section">
+
+        <div class="section-header">
+
+            <div>
+                <h2>Anime Series</h2>
+                <p>Popular anime series</p>
+            </div>
+
+            <div class="section-tabs">
+
+                <button
+                    class="tab active"
+                    data-type="series">
+                    Recent
+                </button>
+
+                <button
+                    class="tab"
+                    data-type="popular">
+                    Popular
+                </button>
+
+            </div>
+
+        </div>
+
+        <div
+            id="seriesGrid"
+            class="anime-grid">
+        </div>
+
+        <div class="pagination">
+
+            <button
+                id="seriesPrev">
+                ←
+            </button>
+
+            <span id="seriesPage">
+                1
+            </span>
+
+            <button
+                id="seriesNext">
+                →
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         MOVIES
+    ================================================== -->
+
+    <section
+        id="movies"
+        class="content-section">
+
+        <div class="section-header">
+
+            <div>
+                <h2>Anime Movies</h2>
+                <p>Latest anime movies</p>
+            </div>
+
+            <button
+                class="view-all"
+                id="movieViewAll">
+                View All →
+            </button>
+
+        </div>
+
+        <div
+            id="movieGrid"
+            class="anime-grid">
+        </div>
+
+        <div class="pagination">
+
+            <button
+                id="moviePrev">
+                ←
+            </button>
+
+            <span id="moviePage">
+                1
+            </span>
+
+            <button
+                id="movieNext">
+                →
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         TOP 10
+    ================================================== -->
+
+    <section class="content-section">
+
+        <div class="section-header">
+
+            <div>
+                <h2>Top 10 Series Today</h2>
+                <p>Most watched anime</p>
+            </div>
+
+        </div>
+
+        <div
+            id="topGrid"
+            class="anime-grid top-grid">
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         GENRES
+    ================================================== -->
+
+    <section class="content-section">
+
+        <div class="section-header">
+
+            <div>
+                <h2>Genres</h2>
+                <p>Find anime by genre</p>
+            </div>
+
+        </div>
+
+        <div class="genre-list">
+
+            <button
+                data-genre="action">
+                Action
+            </button>
+
+            <button
+                data-genre="adventure">
+                Adventure
+            </button>
+
+            <button
+                data-genre="animation">
+                Animation
+            </button>
+
+            <button
+                data-genre="comedy">
+                Comedy
+            </button>
+
+            <button
+                data-genre="fantasy">
+                Fantasy
+            </button>
+
+            <button
+                data-genre="horror">
+                Horror
+            </button>
+
+            <button
+                data-genre="romance">
+                Romance
+            </button>
+
+            <button
+                data-genre="sci-fi">
+                Sci-Fi
+            </button>
+
+            <button
+                data-genre="supernatural">
+                Supernatural
+            </button>
+
+            <button
+                data-genre="thriller">
+                Thriller
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         SCHEDULE
+    ================================================== -->
+
+    <section
+        id="schedule"
+        class="content-section schedule-section">
+
+        <div class="section-header">
+
+            <div>
+                <h2>Estimated Schedule</h2>
+
+                <p>
+                    Upcoming anime episodes
+                </p>
+            </div>
+
+        </div>
+
+        <div class="days">
+
+            <button class="day active">
+                Monday
+            </button>
+
+            <button class="day">
+                Tuesday
+            </button>
+
+            <button class="day">
+                Wednesday
+            </button>
+
+            <button class="day">
+                Thursday
+            </button>
+
+            <button class="day">
+                Friday
+            </button>
+
+            <button class="day">
+                Saturday
+            </button>
+
+            <button class="day">
+                Sunday
+            </button>
+
+        </div>
+
+        <div
+            id="scheduleList"
+            class="schedule-list">
+
+            <div class="schedule-item">
+
+                <div>
+                    <strong>
+                        CAPTAIN TSUBASA
+                    </strong>
+
+                    <span>
+                        New Episode
+                    </span>
+                </div>
+
+                <b>
+                    Coming Soon
+                </b>
+
+            </div>
+
+            <div class="schedule-item">
+
+                <div>
+                    <strong>
+                        LIAR GAME
+                    </strong>
+
+                    <span>
+                        New Episode
+                    </span>
+                </div>
+
+                <b>
+                    Coming Soon
+                </b>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- ==================================================
+     ANIME INFO MODAL
+================================================== -->
+
+<div
+    id="infoModal"
+    class="modal">
+
+    <div class="modal-content">
+
+        <button
+            class="close-modal"
+            data-close="infoModal">
+            ×
+        </button>
+
+        <div
+            id="infoContent">
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     WATCH MODAL
+================================================== -->
+
+<div
+    id="watchModal"
+    class="modal watch-modal">
+
+    <div class="watch-content">
+
+        <button
+            class="close-modal"
+            data-close="watchModal">
+            ×
+        </button>
+
+        <h2 id="watchTitle">
+            Watch Episode
+        </h2>
+
+        <div
+            id="episodeSelector"
+            class="episode-selector">
+        </div>
+
+        <!--
+            Player container.
+            script.js can put an authorised
+            embed/player here.
+        -->
+
+        <div
+            id="videoPlayer"
+            class="video-player">
+
+            <div class="player-message">
+
+                <div class="play-icon">
+                    ▶
+                </div>
+
+                <p>
+                    Select a server to start watching
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- STREAM SERVERS -->
+
+        <div class="server-title">
+            Available Servers
+        </div>
+
+        <div
+            id="serverList"
+            class="servers">
+
+            <!-- Servers will be loaded by script.js -->
+
+        </div>
+
+
+        <!-- PLAYER CONTROLS -->
+
+        <div class="player-controls">
+
+            <label>
+                Audio
+
+                <select id="audioSelect">
+
+                    <option value="Hindi">
+                        Hindi
+                    </option>
+
+                    <option value="English">
+                        English
+                    </option>
+
+                    <option value="Tamil">
+                        Tamil
+                    </option>
+
+                    <option value="Telugu">
+                        Telugu
+                    </option>
+
+                </select>
+
+            </label>
+
+            <div class="episode-buttons">
+
+                <button id="previousEpisode">
+                    ⏮ Previous
+                </button>
+
+                <button id="nextEpisode">
+                    Next ⏭
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     LOGIN / ACCOUNT MODAL
+================================================== -->
+
+<div
+    id="loginModal"
+    class="modal">
+
+    <div class="small-modal">
+
+        <button
+            class="close-modal"
+            data-close="loginModal">
+            ×
+        </button>
+
+        <h2>
+            My Anime Website
+        </h2>
+
+        <p>
+            Account feature coming soon.
+        </p>
+
+        <button
+            class="primary-btn"
+            data-close="loginModal">
+            Continue
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     FOOTER
+================================================== -->
+
+<footer class="footer">
+
+    <div class="footer-logo">
+        My <span>Anime</span>
+    </div>
+
+    <p>
+        My Anime Website — Anime streaming UI
+    </p>
+
+    <div class="footer-links">
+
+        <a href="#home">
+            Home
+        </a>
+
+        <a href="#series">
+            Series
+        </a>
+
+        <a href="#movies">
+            Movies
+        </a>
+
+        <a href="#schedule">
+            Schedule
+        </a>
+
+    </div>
+
+    <p class="copyright">
+        © 2026 My Anime Website
+    </p>
+
+</footer>
+
+
+<!-- ==================================================
+     JAVASCRIPT
+================================================== -->
+
+<script src="script.js"></script>
+
+</body>
+      </html>
