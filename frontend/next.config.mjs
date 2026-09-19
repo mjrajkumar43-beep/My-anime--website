@@ -3,9 +3,6 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreBuildErrors: true,
-  },
   async redirects() {
     return [
       {
